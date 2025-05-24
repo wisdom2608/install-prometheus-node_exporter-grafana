@@ -1,4 +1,4 @@
-## Setup Monitorin Tools On Aws Using Terraform.
+## Setup Monitoring Tools On Aws Using Terraform.
 
 In this Project, we want to install Grometheus, and Grafana in one ec2 instance and Node Exporter on anather ec2 instance using terraform.
 
@@ -383,4 +383,4 @@ sudo systemctl status grafana-server.service --no-pager
 ```
 # E: Configure Grafana with Prometheus as a data source 
 It's the same thing in the `E` section of Part I.
-
+# NB: The practice part of installing these tools has been implemented using terraform
