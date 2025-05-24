@@ -99,7 +99,7 @@ firewall-cmd --permanent --add-port 9100/tcp
 systemctl restart firewalld
 ```
 
-# C. Setting Up Grafana
+# C. Setup Grafana
 
 **What is Grafana?** 
 
