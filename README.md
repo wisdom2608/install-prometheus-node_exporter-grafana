@@ -1,6 +1,6 @@
 ## Setup Monitoring Tools On Aws Using Terraform.
 
-In this Project, we want to install Prometheus, and Grafana in one ec2 instance and Node Exporter on anather ec2 instance using terraform.
+In this Project, we want to install Prometheus, and Grafana on one EC2 instance and Node Exporter on another EC2 instance using terraform.
 
 These monitoring tools are:
 
@@ -14,7 +14,7 @@ These monitoring tools are:
 
 ### What is Prometheus?
 
-- It is an open-source systems monitoring and alerting toolkit which collects and aggregates metrics as time series data. It stores a variety of events such as memory consumption, CPU and network uitilization, indiviudal incoming/outgoing requets in its database system called Time series Database (TSDB).  
+- It is an open-source systems monitoring and alerting toolkit which collects and aggregates metrics as time series data. It stores a variety of events such as memory consumption, CPU and network uitilization, indiviudal incoming/outgoing requests in its database system called Time series Database (TSDB).  
 
 # Installation Steps
 
@@ -23,7 +23,7 @@ These monitoring tools are:
 You can use `wget` command to download the compressed file. Copy the link address of the file that you want to download and then run the command in your terminal.
 
 
-**A.1.1.**  Create directory called **prometheus** and extract the downloaded file to that directory. Unpack/untar/unzip the .
+**A.1.1.**  Create directory called **prometheus** and extract the downloaded file to that directory. Unpack/untar/unzip the compressed file.
 
 ``` bash
 sudo su
@@ -44,9 +44,9 @@ cd prometheus-3.3.1.linux-amd64.tar.gz
 
 **A.1.3.** At this moment, prometheus will start running, and the default port which prometheus listens on, is port **9090**. 
 
-**A.1.4.** If you use local linux machine you can access Prometheus UI here `http://localhost:9090/`. For this tutorial, we will use the external or public IP address our aws ec2 instance `https://<your_ec2_xtarnal_ip_address>:9090/`. And for us to access our prometheus UI, we need to open port **9090** in security group of our ecc2 instance where prometheus is running.
+**A.1.4.** If you use local linux machine you can access Prometheus UI here `http://localhost:9090/`. For this tutorial, we will use the external or public IP address of our aws EC2 instance `https://<your_ec2_xtarnal_ip_address>:9090/`. And for us to access our prometheus UI, we need to open port **9090** in security group of our EC2 instance where prometheus is running.
 
-If you use local linux machine, run below commands:
+If you are using a local linux machine, run the commands below:
 
 ``` bash
 firewall-cmd --add-port 9090/tcp
@@ -54,14 +54,14 @@ firewall-cmd --permanent --add-port 9090/tcp
 systemctl restart firewalld
 ```
 
-- In the prometheus UI, if we execute  the`up` command, it will show the instances which are in UP state. Here, we will only have one instance which is the one in which prometheus is running. It will display this nessage `up{instance="localhost:9090", job="prometheus"}`. If we add IP adresses of other instances to `prometheus.yml` configuration file, it will display those instances,as well. For example, we'll add another instance when we install node exporter.
+- In the prometheus UI, if we execute  the`up` command, it will show the instances which are in "UP" state. Here, we will only have one instance which is the one in which prometheus is running. It will display this message `up{instance="localhost:9090", job="prometheus"}`. If we add IP adresses of other instances to `prometheus.yml` configuration file, it will display those instances,as well. For example, we'll add another instance when we install  Node Exporter.
 
 
 # B. Setup Node Exporter
 
 **What is Node Exporter?** 
 
-- There are a lot of exporters which are provided by Prometheus itself. Exporters are used to expose metrics so that Prometheus can collect scrap them. Node Exporter is one of the simple exporters out there and it is used to collect basic system metrics from the VM. Other exporter like `black box` collect application's metrics and expose them to prometheus.
+- There are a lot of exporters which are provided by Prometheus itself. Exporters are used to expose metrics so that Prometheus scraps them. Node Exporter is one of the simple Exporters is used to collect basic system metrics from the VM. Other exporter like `Blackbox Exporter` collect application's metrics and exposes them to prometheus as well.
 
 ### Installation Steps
 
@@ -89,7 +89,7 @@ cd node-exporter/node_exporter-1.9.1.linux-amd64/
 
 **B.1.3.** Node-exporter listens on port **9100**. 
 
-**B.1.4.** If we were using a local linux machine, we would have accessed Node-exporter metrics using `http://localhost:9100/`. Since we are using an ec2 instance, we will use the public ip address to access our Node-Exporter web UI. In my case, it is `https://<your_ec2_public_ip_address>:9100/`. We must make sure that port **9100** is allowed in the instance security group rule. 
+**B.1.4.** If we were using a local linux machine, we would have accessed Node-exporter metrics using `http://localhost:9100/`. Since we are using an EC2 instance, we will use the public ip address to access our Node-Exporter web UI. In my case, it is `https://<your_ec2_public_ip_address>:9100/`. We must make sure that port **9100** is allowed in the instance security group rule. 
 
 If we were using a local linux machine, the commands below will be useful:
 
@@ -127,12 +127,9 @@ sudo rm -rf  grafana-enterprise-12.0.0.linux-amd64.tar.gz
 cd grafana/grafana-12.0.0/
 ./bin/grafana-server 
 ```
+**C.1.3.** Grafana listens on port **3000**. If we were using a local linux machine, we would access Grafana UI on `http://localhost:3000/`. We will use the public IP Address of our aws EC2 instance. Do`https://<your_ec2_public_ip_address>:3000/`. Let's make sure port **3000** is open in our instance security group rule.
 
-**C.1.3.** The default port for grafana is **3000**. 
-
-**C.1.4.** Grafana listens on port **3000**. If we were using a local linux machine, we would access Grafana UI on `http://localhost:3000/`. We will use the public IP Address of our aws ec2 instance. Do`https://<your_ec2_public_ip_address>:3000/`. Let's make sure port **3000** is open in our instance security group rule.
-
-If you use local linux machine, run below commands:
+If you usea  local linux machine, run below commands:
 
 ``` bash
 firewall-cmd --add-port 3000/tcp
@@ -157,7 +154,7 @@ sudo nano /etc/prometheus/prometheus.yml
     static_configs:
       - targets: ["<your_ec2_public_ip_address>:9100"]
 ```
-Check if the configuration was successful:
+Check if the configuration was successful using promtool:
 
 ```bash
 promtool check config /etc/prometheus/prometheus.yml
@@ -187,10 +184,10 @@ sudo systemctl restart prometheus
 
 # E: Configure Grafana with Prometheus as a data source 
 
-To better visualize matrix scrapped by prometheus, we have to configure grafana with Prometheus as a data source 
+To use Grafana to visualize matrics scrapped by prometheus, we have to configure Grafana with Prometheus as a data source 
 
 **E.1.0**: Create the data source
- - Login to grafana
+ - Login to Grafana
  - On the right-hand-side of grafana dashboard, click on `Connections` -> `Data source`. 
  - On the full screen, click on `Add data source`.
    - choose `prometheus`.
